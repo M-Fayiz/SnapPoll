@@ -17,8 +17,14 @@ const envConfig = {
   get MONGO_URL() {
     return process.env.MONGO_URL;
   },
-  get REDIS_URL() {
-    return process.env.REDIS_URL;
+  get GOOGLE_CALLBACK_URL() {
+    return process.env.GOOGLE_CALLBACK_URL;
+  },
+  get GOOGLE_CLIENT_SECRET() {
+    return process.env.GOOGLE_CLIENT_SECRET;
+  },
+  get GOOGLE_CLIENT_ID() {
+    return process.env.GOOGLE_CLIENT_ID;
   },
 };
 

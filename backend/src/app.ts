@@ -1,42 +1,45 @@
 import express, { Application } from "express";
 import cors from "cors";
 import http from "http";
-import dotenv from "dotenv";
-import mongoose from "mongoose";
 import router from "./router";
 import { Server } from "socket.io";
 import { registerSockets } from "./socket";
+import { connectDB } from "./config/db.config";
+import envConfig from "./config/env.config";
+import morgan from 'morgan'
 
-dotenv.config();
 
 const app: Application = express();
 const server = http.createServer(app);
+const CLIENT_URL = envConfig.CLIENT_URL
 const io = new Server(server, {
   cors: {
-    origin: "*"
+    origin: CLIENT_URL,
+    credentials: true
   }
 });
 
-const PORT = Number(process.env.PORT) || 3000;
-const MONGO_URI = process.env.MONGO_URI || "";
 
-app.use(cors());
+
+app.use(cors({
+  origin: CLIENT_URL,
+  credentials: true,
+  methods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"]
+}));
+
 app.use(express.json());
-
+app.use(morgan("dev"));
 app.use("/api", router);
 
 registerSockets(io);
 
 const start = async () => {
-  if (!MONGO_URI) {
-    console.error("MONGO_URI is not set");
-    process.exit(1);
-  }
+  
+  await connectDB()
+ 
 
-  await mongoose.connect(MONGO_URI);
-
-  server.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  server.listen(envConfig.PORT, () => {
+    console.log(`Server is running on ${envConfig.PORT}`);
   });
 };
 

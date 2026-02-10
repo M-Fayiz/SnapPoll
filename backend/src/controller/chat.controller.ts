@@ -6,8 +6,9 @@ const chatService = new ChatService();
 export const getMessages = async (req: Request, res: Response) => {
   try {
     const { limit } = req.query;
+    const {pollId}= req.params
     const messages = await chatService.getHistory(
-      req.params.pollId,
+     pollId as string,
       limit ? Number(limit) : 50
     );
     return res.json(messages);
@@ -23,7 +24,7 @@ export const sendMessage = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid payload" });
     }
     const message = await chatService.sendMessage({
-      pollId: req.params.pollId,
+      pollId: req.params.pollId as string,
       userId,
       text
     });

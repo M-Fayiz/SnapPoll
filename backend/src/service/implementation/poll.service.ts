@@ -1,10 +1,9 @@
 import { Types } from "mongoose";
 import { IPollService } from "../interface/poll.service.interface";
 import { IPollRepository } from "../../repository/interface/poll.repository.interface";
-import { PollRepository } from "../../repository/implementation/poll.repository";
 
 export class PollService implements IPollService {
-  constructor(private readonly pollRepo: IPollRepository = new PollRepository()) {}
+  constructor(private readonly pollRepo: IPollRepository) {}
 
   async createPoll(data: {
     question: string;
@@ -14,10 +13,12 @@ export class PollService implements IPollService {
     expiresAt: Date;
   }) {
     const options = data.options.map((opt) => ({ text: opt.text, votes: 0 }));
-    return this.pollRepo.create({
+    return this.pollRepo.create({ 
       question: data.question,
       options,
-      createdBy: new Types.ObjectId(data.createdBy),
+      createdBy: Types.ObjectId.isValid(data.createdBy)
+  ? new Types.ObjectId(data.createdBy)
+  : new Types.ObjectId(),
       roomId: data.roomId,
       expiresAt: data.expiresAt
     } as never);
@@ -46,5 +47,9 @@ export class PollService implements IPollService {
     }
 
     return this.pollRepo.incrementVote(pollId, optionId);
+  }
+
+  async listPolls() {
+    return this.pollRepo.listAll();
   }
 }

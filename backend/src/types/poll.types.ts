@@ -7,7 +7,7 @@ export interface IPoll{
 
   options: IPollOption[],
 
-  createdBy: Types.ObjectId,   
+  createdBy: string,   
 
   roomId: string,        
 

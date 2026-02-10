@@ -9,13 +9,13 @@ const MessageSchema = new Schema<IMessageModel>({
     type: Types.ObjectId,
     ref: dbModelName.POLL,
     required: true,
-    index: true
+
   },
   userId: {
     type: Types.ObjectId,
     ref: dbModelName.USER,
     required: true,
-    index: true
+
   },
   text: {
     type: String,
@@ -23,6 +23,6 @@ const MessageSchema = new Schema<IMessageModel>({
   }
 },{ timestamps: true });
 
-MessageSchema.index({ pollId: 1, createdAt: 1 });
+
 
 export const MessageModel = model(dbModelName.MESSAGE, MessageSchema);

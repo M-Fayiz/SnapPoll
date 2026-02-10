@@ -1,10 +1,10 @@
 import { Types } from "mongoose";
-import { pollModel } from "../../model/poll.mode";
+import { IPollModel, pollModel } from "../../model/poll.model";
 import { IPoll } from "../../types/poll.types";
 import { IPollRepository } from "../interface/poll.repository.interface";
-import { BaseRepository } from "./base.repository";
+import { BaseRepository } from "../base.repository";
 
-export class PollRepository extends BaseRepository<IPoll> implements IPollRepository {
+export class PollRepository extends BaseRepository<IPollModel> implements IPollRepository {
   constructor() {
     super(pollModel);
   }
@@ -31,5 +31,9 @@ export class PollRepository extends BaseRepository<IPoll> implements IPollReposi
 
   async setInactive(pollId: string | Types.ObjectId) {
     return pollModel.findByIdAndUpdate(pollId, { isActive: false }, { new: true }).exec();
+  }
+
+  async listAll() {
+    return pollModel.find().sort({ createdAt: -1 }).exec();
   }
 }

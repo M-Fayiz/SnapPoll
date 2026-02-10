@@ -1,9 +1,9 @@
-import { MessageModel } from "../../model/message.model";
+import { IMessageModel, MessageModel } from "../../model/message.model";
 import { IMessage } from "../../types/message.types";
 import { IMessageRepository } from "../interface/message.repository.interface";
-import { BaseRepository } from "./base.repository";
+import { BaseRepository } from "../base.repository";
 
-export class MessageRepository extends BaseRepository<IMessage> implements IMessageRepository {
+export class MessageRepository extends BaseRepository<IMessageModel> implements IMessageRepository {
   constructor() {
     super(MessageModel);
   }

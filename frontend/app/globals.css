@@ -1,2 +1,32 @@
 @import "tailwindcss";
 
+:root {
+  --bg: #0f1216;
+  --panel: #151a21;
+  --panel-2: #1c232c;
+  --ink: #e9eef5;
+  --muted: #a6b0be;
+  --accent: #f5d547;
+  --accent-2: #7ee7d3;
+  --danger: #f07c7c;
+}
+
+body {
+  background: radial-gradient(1200px 800px at 10% -10%, #1f2732 0%, transparent 60%),
+    radial-gradient(900px 600px at 110% 10%, #2a1f33 0%, transparent 55%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.soft-ring {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 25px 80px rgba(0, 0, 0, 0.35);
+}

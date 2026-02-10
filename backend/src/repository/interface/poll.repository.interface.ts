@@ -8,4 +8,5 @@ export interface IPollRepository extends IBaseRepository<IPoll> {
   findByRoomId(roomId: string): Promise<IPoll | null>;
   incrementVote(pollId: string, optionId: string): Promise<IPoll | null>;
   setInactive(pollId: string | Types.ObjectId): Promise<IPoll | null>;
+  listAll(): Promise<IPoll[]>;
 }

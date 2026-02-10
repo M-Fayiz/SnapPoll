@@ -12,4 +12,6 @@ export interface IPollService {
   getPoll(pollId: string): Promise<IPoll | null>;
 
   vote(pollId: string, optionId: string): Promise<IPoll | null>;
+
+  listPolls(): Promise<IPoll[]>;
 }

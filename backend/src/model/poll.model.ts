@@ -19,7 +19,7 @@ const PollShema = new Schema<IPollModel>({
   ],
 
   createdBy: {
-    type: Types.ObjectId,
+    type: String,
     ref: dbModelName.USER,
     required: true
   }, 
@@ -30,6 +30,6 @@ const PollShema = new Schema<IPollModel>({
   isActive: { type: Boolean, default: true }
 },{timestamps:true})
 
-PollShema.index({ roomId: 1 }, { unique: true });
+
 
 export const pollModel = model(dbModelName.POLL, PollShema)
