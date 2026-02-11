@@ -1,7 +1,9 @@
+import { IUserModel } from "../../model/user.model";
 import { IUser } from "../../types/user.types";
-import { IBaseRepository } from "./base.repository.interface";
+import { BaseRepository } from "../base.repository";
 
-export interface IUserRepository extends IBaseRepository<IUser> {
+
+export interface IUserRepository  {
   upsertByGoogleId(data: Omit<IUser, "createdAt" | "updatedAt">): Promise<IUser | null>;
   findById(userId: string): Promise<IUser | null>;
 }

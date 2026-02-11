@@ -34,9 +34,7 @@ export default function PollCard({
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.22em] text-[var(--muted)]">Live room</p>
-          <h3 className="mt-3 font-[var(--font-display)] text-xl font-semibold">
-            {title}
-          </h3>
+          <h3 className="mt-3 font-[var(--font-display)] text-xl font-semibold">{title}</h3>
         </div>
         <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[var(--muted)]">
           {timeLeft}

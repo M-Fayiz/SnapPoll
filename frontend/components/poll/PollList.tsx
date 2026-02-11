@@ -32,7 +32,8 @@ export default function PollList({ polls }: PollListProps) {
             {poll.question}
           </h3>
           <p className="text-xs text-[var(--muted)]">
-            {poll.options.length} options · {poll.options.reduce((sum, opt) => sum + opt.votes, 0)} votes
+            {poll.options.length} options · {poll.options.reduce((sum, opt) => sum + opt.votes, 0)}{" "}
+            votes
           </p>
         </Link>
       ))}

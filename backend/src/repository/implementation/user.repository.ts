@@ -1,7 +1,7 @@
 import { IUserModel, UserModel } from "../../model/user.model";
 import { IUser } from "../../types/user.types";
 import { IUserRepository } from "../interface/user.repository.interface";
-import { BaseRepository } from "../base.repository"; 
+import { BaseRepository } from "../base.repository";
 
 export class UserRepository extends BaseRepository<IUserModel> implements IUserRepository {
   constructor() {
@@ -9,14 +9,14 @@ export class UserRepository extends BaseRepository<IUserModel> implements IUserR
   }
 
   async upsertByGoogleId(data: Omit<IUser, "createdAt" | "updatedAt">) {
-    return UserModel.findOneAndUpdate(
+    return this.findOneAndUpdate(
       { googleId: data.googleId },
       { $set: data },
       { new: true, upsert: true }
-    ).exec();
+    );
   }
 
-  async findById(userId: string) {
-    return UserModel.findById(userId).exec();
+  async findUser(userId: string) {
+    return this.findById(userId);
   }
 }

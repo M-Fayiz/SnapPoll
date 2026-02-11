@@ -1,4 +1,4 @@
-import { axiosInstance } from "./api"; 
+import { axiosInstance } from "./api";
 
 export interface PollOption {
   _id: string;
@@ -21,16 +21,22 @@ export interface Poll {
 export interface CreatePollPayload {
   question: string;
   options: { text: string }[];
-  createdBy: string;
-  roomId: string;
   expiresAt: string;
 }
 
 export const pollService = {
-  list: async () => (await axiosInstance.get<Poll[]>("/polls")).data,
-  getById: async (id: string) => (await axiosInstance.get<Poll>(`/polls/${id}`)).data,
-  create: async (payload: CreatePollPayload) =>
-    (await axiosInstance.post<Poll>("/polls", payload)).data,
-  vote: async (id: string, optionId: string) =>
-    (await axiosInstance.post<Poll>(`/polls/${id}/vote`, { optionId })).data,
+  list: async () => {
+    const response = await axiosInstance.get<Poll[]>("/polls");
+    return response.data;
+  },
+  getById: async (id: string) => {
+    const response = await axiosInstance.get<Poll>(`/polls/${id}`);
+    return response.data;
+  },
+  create: async (payload: CreatePollPayload) => {
+    const response = await axiosInstance.post<Poll>("/polls", payload);
+    return response.data;
+  },
+  vote: async (id: string, optionId: string, userId: string) =>
+    (await axiosInstance.post<Poll>(`/polls/${id}/vote`, { optionId, userId })).data,
 };

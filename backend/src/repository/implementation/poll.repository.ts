@@ -21,12 +21,14 @@ export class PollRepository extends BaseRepository<IPollModel> implements IPollR
     return pollModel.findOne({ roomId }).exec();
   }
 
-  async incrementVote(pollId: string, optionId: string) {
-    return pollModel.findOneAndUpdate(
-      { _id: pollId, "options._id": optionId, isActive: true },
-      { $inc: { "options.$.votes": 1 } },
-      { new: true }
-    ).exec();
+  async incrementVote(pollId: string, optionId: string, userId: string) {
+    return pollModel
+      .findOneAndUpdate(
+        { _id: pollId, "options._id": optionId, isActive: true, voters: { $ne: userId } },
+        { $inc: { "options.$.votes": 1 }, $addToSet: { voters: userId } },
+        { new: true }
+      )
+      .exec();
   }
 
   async setInactive(pollId: string | Types.ObjectId) {

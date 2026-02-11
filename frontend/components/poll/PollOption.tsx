@@ -41,9 +41,7 @@ export default function PollOption({
       </div>
       <div className="flex items-center justify-between text-xs text-[var(--muted)]">
         <span>{percentage}%</span>
-        <span className="opacity-0 transition group-hover:opacity-100">
-          Click to vote
-        </span>
+        <span className="opacity-0 transition group-hover:opacity-100">Click to vote</span>
       </div>
     </button>
   );

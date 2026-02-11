@@ -26,6 +26,9 @@ const envConfig = {
   get GOOGLE_CLIENT_ID() {
     return process.env.GOOGLE_CLIENT_ID;
   },
+  get SESSION_SECRET() {
+    return process.env.SESSION_SECRET;
+  },
 };
 
 export default envConfig;

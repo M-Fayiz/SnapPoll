@@ -1,9 +1,15 @@
-import { axiosInstance } from "./api"; 
+import { axiosInstance } from "./api";
+
+export interface ChatUser {
+  _id?: string;
+  name?: string;
+  avatar?: string;
+}
 
 export interface ChatMessage {
   _id: string;
   pollId: string;
-  userId: string;
+  userId: string | ChatUser;
   text: string;
   createdAt: string;
   updatedAt: string;

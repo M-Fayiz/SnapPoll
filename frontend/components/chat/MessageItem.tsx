@@ -1,21 +1,22 @@
 export interface MessageItemProps {
   name: string;
   text: string;
-  tone?: "gold" | "mint" | "muted";
+  isMine?: boolean;
 }
 
-const toneMap = {
-  gold: "text-[var(--accent)]",
-  mint: "text-[var(--accent-2)]",
-  muted: "text-[var(--muted)]",
-};
-
-export default function MessageItem({ name, text, tone = "muted" }: MessageItemProps) {
+export default function MessageItem({ name, text, isMine }: MessageItemProps) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm">
-      <span className={`${toneMap[tone]} font-medium`}>{name}</span>
-      <span className="text-[var(--muted)]"> — </span>
-      <span className="text-[var(--ink)]">{text}</span>
+    <div className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+      <div
+        className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+          isMine
+            ? "bg-[var(--accent)] text-black"
+            : "border border-white/10 bg-white/5 text-[var(--ink)]"
+        }`}
+      >
+        <div className={`text-xs ${isMine ? "text-black/70" : "text-[var(--muted)]"}`}>{name}</div>
+        <div className="mt-1">{text}</div>
+      </div>
     </div>
   );
 }

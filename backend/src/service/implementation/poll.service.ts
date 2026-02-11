@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { IPollService } from "../interface/poll.service.interface";
 import { IPollRepository } from "../../repository/interface/poll.repository.interface";
+import { generateId } from "../../utils/generateRoomId";
 
 export class PollService implements IPollService {
   constructor(private readonly pollRepo: IPollRepository) {}
@@ -13,14 +14,13 @@ export class PollService implements IPollService {
     expiresAt: Date;
   }) {
     const options = data.options.map((opt) => ({ text: opt.text, votes: 0 }));
-    return this.pollRepo.create({ 
+    const roomId = generateId();
+    return this.pollRepo.create({
       question: data.question,
       options,
-      createdBy: Types.ObjectId.isValid(data.createdBy)
-  ? new Types.ObjectId(data.createdBy)
-  : new Types.ObjectId(),
-      roomId: data.roomId,
-      expiresAt: data.expiresAt
+      roomId,
+      createdBy: new Types.ObjectId(data.createdBy),
+      expiresAt: data.expiresAt,
     } as never);
   }
 
@@ -36,7 +36,7 @@ export class PollService implements IPollService {
     return poll;
   }
 
-  async vote(pollId: string, optionId: string) {
+  async vote(pollId: string, optionId: string, userId: string) {
     const poll = await this.pollRepo.findById(pollId);
     if (!poll) return null;
 
@@ -46,7 +46,7 @@ export class PollService implements IPollService {
       return null;
     }
 
-    return this.pollRepo.incrementVote(pollId, optionId);
+    return this.pollRepo.incrementVote(pollId, optionId, userId);
   }
 
   async listPolls() {

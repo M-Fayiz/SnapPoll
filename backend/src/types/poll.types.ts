@@ -1,25 +1,24 @@
-import { Types } from "mongoose"
+import { Types } from "mongoose";
 
-export interface IPoll{
-    
+export interface IPoll {
+  question: string;
 
-  question: string,
+  options: IPollOption[];
 
-  options: IPollOption[],
+  createdBy: string;
 
-  createdBy: string,   
+  roomId: string;
 
-  roomId: string,        
+  expiresAt: Date;
+  isActive: boolean;
+  voters?: string[];
 
-  expiresAt: Date,
-  isActive: boolean,
-
-  createdAt?: Date,
-  updatedAt?: Date
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-export interface IPollOption{
-    _id?:Types.ObjectId,
-    text:string,
-    votes:number
+export interface IPollOption {
+  _id?: Types.ObjectId;
+  text: string;
+  votes: number;
 }

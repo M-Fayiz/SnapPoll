@@ -10,11 +10,19 @@ interface ChatBoxProps {
   typingName?: string;
   onSend?: (text: string) => Promise<void> | void;
   disabled?: boolean;
+  currentUserName?: string;
 }
 
-export default function ChatBox({ roomName, messages, typingName, onSend, disabled }: ChatBoxProps) {
+export default function ChatBox({
+  roomName,
+  messages,
+  typingName,
+  onSend,
+  disabled,
+  currentUserName,
+}: ChatBoxProps) {
   const [draft, setDraft] = useState("");
-  const messageList = useMemo(() => messages.slice(-5), [messages]);
+  const messageList = useMemo(() => messages.slice(-20), [messages]);
 
   const handleSend = async () => {
     if (!draft.trim() || !onSend) return;
@@ -28,18 +36,20 @@ export default function ChatBox({ roomName, messages, typingName, onSend, disabl
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.22em] text-[var(--muted)]">Chat stream</p>
-          <h3 className="mt-3 font-[var(--font-display)] text-xl font-semibold">
-            {roomName}
-          </h3>
+          <h3 className="mt-3 font-[var(--font-display)] text-xl font-semibold">{roomName}</h3>
         </div>
         <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[var(--muted)]">
           24 online
         </span>
       </div>
 
-      <div className="mt-5 flex flex-col gap-3 text-sm">
-        {messageList.map((message) => (
-          <MessageItem key={`${message.name}-${message.text}`} {...message} />
+      <div className="mt-5 flex max-h-[360px] flex-col gap-3 overflow-y-auto pr-2 text-sm">
+        {messageList.map((message, index) => (
+          <MessageItem
+            key={`${message.name}-${message.text}-${index}`}
+            {...message}
+            isMine={currentUserName ? message.name === currentUserName : message.isMine}
+          />
         ))}
         {typingName ? <TypingIndicator name={typingName} /> : null}
       </div>

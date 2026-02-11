@@ -1,9 +1,9 @@
-import { Model, QueryFilter, UpdateQuery,Document } from "mongoose";
+import { Model, QueryFilter, UpdateQuery, Document } from "mongoose";
 
 export abstract class BaseRepository<T extends Document> {
   constructor(private model: Model<T>) {}
 
- async create(data: Partial<T>): Promise<T> {
+  async create(data: Partial<T>): Promise<T> {
     const document = new this.model(data);
     return document.save();
   }
@@ -27,4 +27,18 @@ export abstract class BaseRepository<T extends Document> {
   deleteOne(filter: QueryFilter<T>) {
     return this.model.deleteOne(filter).exec();
   }
+  async findOneAndUpdate(
+    filter: QueryFilter<T>,
+    update: UpdateQuery<T>,
+    options: { new?: boolean; upsert?: boolean } = { new: true }
+  ) {
+    return this.model.findOneAndUpdate(filter, update, options);
+  }
+   findQuery(filter: QueryFilter<T> = {}) {
+    return this.model.find(filter);
+  }
+  findOneQuery(filter: QueryFilter<T>) {
+  return this.model.findOne(filter);
+}
+
 }
