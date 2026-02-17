@@ -23,7 +23,7 @@ export default function PollOption({
   percentage,
   votes,
   voters = [],
-  accent = "indigo",
+  accent = "stone",
   active = false,
   onSelect,
 }: PollOptionProps) {
