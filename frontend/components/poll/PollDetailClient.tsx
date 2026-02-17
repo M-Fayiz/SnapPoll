@@ -100,12 +100,15 @@ export default function PollDetailClient({ pollId }: PollDetailClientProps) {
 
   const options = poll.options.map((option, index) => {
     const percentage = voteTotal ? Math.round((option.votes / voteTotal) * 100) : 0;
-    const accent = index % 2 === 0 ? "gold" : "mint";
+    const accents = ["indigo", "purple", "rose", "mint", "gold"] as const;
+    const accent = accents[index % accents.length];
+
     return {
       label: option.text,
       votes: option.votes,
       percentage,
       accent,
+      voters: option.voters || [],
     } as const;
   });
 
