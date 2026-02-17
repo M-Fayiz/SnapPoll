@@ -5,12 +5,14 @@ export interface IPollService {
     question: string;
     createdBy: string;
     options: { text: string }[];
-    expiresAt: Date;
+
   }): Promise<IPoll>;
 
   getPoll(pollId: string): Promise<IPoll | null>;
 
   vote(pollId: string, optionId: string, userId: string): Promise<IPoll | null>;
+  removeVote(pollId: string, optionId: string, userId: string): Promise<IPoll | null>;
+  deletePoll(pollId: string, creatorId: string): Promise<boolean>;
 
   listPolls(): Promise<IPoll[]>;
 }

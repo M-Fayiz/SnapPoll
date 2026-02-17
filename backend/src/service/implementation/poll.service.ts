@@ -11,7 +11,7 @@ export class PollService implements IPollService {
     options: { text: string }[];
     createdBy: string;
     roomId: string;
-    expiresAt: Date;
+
   }) {
     const options = data.options.map((opt) => ({ text: opt.text, votes: 0 }));
     const roomId = generateId();
@@ -20,19 +20,14 @@ export class PollService implements IPollService {
       options,
       roomId,
       createdBy: new Types.ObjectId(data.createdBy),
-      expiresAt: data.expiresAt,
+
     } as never);
   }
 
   async getPoll(pollId: string) {
     const poll = await this.pollRepo.findById(pollId);
     if (!poll) return null;
-
-    const now = new Date();
-    if (poll.isActive && poll.expiresAt <= now) {
-      await this.pollRepo.setInactive(pollId);
-      poll.isActive = false;
-    }
+   
     return poll;
   }
 
@@ -40,13 +35,19 @@ export class PollService implements IPollService {
     const poll = await this.pollRepo.findById(pollId);
     if (!poll) return null;
 
-    const now = new Date();
-    if (!poll.isActive || poll.expiresAt <= now) {
-      await this.pollRepo.setInactive(pollId);
-      return null;
-    }
 
     return this.pollRepo.incrementVote(pollId, optionId, userId);
+  }
+  async removeVote(pollId: string, optionId: string, userId: string) {
+    const poll = await this.pollRepo.findById(pollId);
+    if (!poll) return null;
+
+
+    return this.pollRepo.decrementVote(pollId, optionId, userId);
+  }
+
+  async deletePoll(pollId: string, creatorId: string) {
+    return this.pollRepo.deleteByIdAndCreator(pollId, creatorId);
   }
 
   async listPolls() {

@@ -22,16 +22,42 @@ export class PollRepository extends BaseRepository<IPollModel> implements IPollR
   }
 
   async incrementVote(pollId: string, optionId: string, userId: string) {
-    return pollModel
+    await pollModel
       .findOneAndUpdate(
-        { _id: pollId, "options._id": optionId, isActive: true },
+        { _id: pollId, "options._id": optionId, isActive: true, voters: { $ne: userId } },
         {
           $inc: { "options.$.votes": 1 },
-          $addToSet: { "options.$.voters": userId, voters: userId }
+          $addToSet: { "options.$.voters": userId, voters: userId },
         },
         { new: true }
       )
       .exec();
+
+    return this.findById(pollId);
+  }
+  async decrementVote(pollId: string, optionId: string, userId: string) {
+    await pollModel
+      .findOneAndUpdate(
+        { _id: pollId, isActive: true, "options._id": optionId, "options.voters": userId },
+        {
+          $inc: { "options.$.votes": -1 },
+          $pull: { "options.$.voters": userId, voters: userId },
+        },
+        { new: true }
+      )
+      .exec();
+
+    await pollModel.updateOne(
+      { _id: pollId, "options._id": optionId, "options.votes": { $lt: 0 } },
+      { $set: { "options.$.votes": 0 } }
+    );
+
+    return this.findById(pollId);
+  }
+
+  async deleteByIdAndCreator(pollId: string, creatorId: string) {
+    const deleted = await pollModel.findOneAndDelete({ _id: pollId, createdBy: creatorId }).exec();
+    return !!deleted;
   }
 
   async setInactive(pollId: string | Types.ObjectId) {

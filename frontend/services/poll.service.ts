@@ -13,7 +13,6 @@ export interface Poll {
   options: PollOption[];
   createdBy: string;
   roomId: string;
-  expiresAt: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -22,7 +21,6 @@ export interface Poll {
 export interface CreatePollPayload {
   question: string;
   options: { text: string }[];
-  expiresAt: string;
 }
 
 export const pollService = {
@@ -36,6 +34,10 @@ export const pollService = {
   },
   create: async (payload: CreatePollPayload) => {
     const response = await axiosInstance.post<Poll>("/polls", payload);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await axiosInstance.delete<{ deleted: boolean }>(`/polls/${id}`);
     return response.data;
   },
   vote: async (id: string, optionId: string, userId: string) =>

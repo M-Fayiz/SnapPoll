@@ -19,12 +19,13 @@ export default function PollDetailClient({ pollId }: PollDetailClientProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string>("");
-  const [userName, setUserName] = useState<string>("You");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const voteTotal = useMemo(
     () => poll?.options.reduce((sum, opt) => sum + opt.votes, 0) || 0,
     [poll]
   );
+  const isOwner = Boolean(userId && poll?.createdBy && String(poll.createdBy) === userId);
 
   useEffect(() => {
     let active = true;
@@ -38,7 +39,6 @@ export default function PollDetailClient({ pollId }: PollDetailClientProps) {
         setPoll(pollData);
         setMessages(messageData.slice().reverse());
         if (me?._id) setUserId(me._id);
-        if (me?.name) setUserName(me.name);
       })
       .catch(() => {
         if (!active) return;
@@ -61,17 +61,22 @@ export default function PollDetailClient({ pollId }: PollDetailClientProps) {
     const onExpired = () => {
       setPoll((prev) => (prev ? { ...prev, isActive: false } : prev));
     };
+    const onDeleted = () => {
+      router.push("/dashboard");
+    };
 
     socket.on(SocketEvents.POLL_UPDATE, onPollUpdate);
     socket.on(SocketEvents.CHAT_MESSAGE, onChatMessage);
     socket.on(SocketEvents.POLL_EXPIRED, onExpired);
+    socket.on(SocketEvents.POLL_DELETED, onDeleted);
 
     return () => {
       socket.off(SocketEvents.POLL_UPDATE, onPollUpdate);
       socket.off(SocketEvents.CHAT_MESSAGE, onChatMessage);
       socket.off(SocketEvents.POLL_EXPIRED, onExpired);
+      socket.off(SocketEvents.POLL_DELETED, onDeleted);
     };
-  }, [pollId]);
+  }, [pollId, router]);
 
   if (loading) {
     return (
@@ -80,9 +85,7 @@ export default function PollDetailClient({ pollId }: PollDetailClientProps) {
       </div>
     );
   }
-  console.log("userId :", userId);
 
-  messages.map((message) => console.log(message.userId == userId));
   if (!poll) {
     return (
       <div className="glass soft-ring rounded-3xl p-6 text-sm text-[var(--muted)]">
@@ -100,7 +103,8 @@ export default function PollDetailClient({ pollId }: PollDetailClientProps) {
 
   const options = poll.options.map((option, index) => {
     const percentage = voteTotal ? Math.round((option.votes / voteTotal) * 100) : 0;
-    const accents = ["indigo", "purple", "rose", "mint", "gold"] as const;
+    const accents = ["sand", "sage", "peach", "stone", "clay"] as const;
+
     const accent = accents[index % accents.length];
 
     return {
@@ -111,48 +115,91 @@ export default function PollDetailClient({ pollId }: PollDetailClientProps) {
       voters: option.voters || [],
     } as const;
   });
+  const handleDelete = async () => {
+    if (!poll || !userId || !isOwner || isDeleting) return;
+    setIsDeleting(true);
+    try {
+      socket.emit(SocketEvents.POLL_DELETE, { pollId: poll._id, userId });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await authService.logout();
+    socket.disconnect();
+    router.push("/");
+  };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
-      <PollCard
-        title={poll.question}
-        roomCode={poll.roomId}
-        timeLeft={poll.isActive ? "Active" : "Closed"}
-        totalVotes={voteTotal}
-        options={options}
-        onVote={async (index) => {
-          const option = poll.options[index];
-          if (!option) return;
-          if (!userId) return;
-          socket.emit(SocketEvents.POLL_VOTE, {
-            pollId: poll._id,
-            optionId: option._id,
-            userId,
-          });
-        }}
-      />
-      <ChatBox
-        roomName={poll.roomId}
-        currentUserName={userName}
-        messages={messages.map((message) => ({
-          name:
-            typeof message.userId === "string"
-              ? message.userId === userId
-                ? userName
-                : message.userId
-              : message.userId.name || "User",
-          text: message.text,
-          isMine: message.userId === userId ? true : false,
-        }))}
-        disabled={!userId}
-        onSend={async (text) => {
-          socket.emit(SocketEvents.CHAT_MESSAGE, {
-            pollId: poll._id,
-            userId,
-            text,
-          });
-        }}
-      />
+    <div className="space-y-4">
+      <div className="glass soft-ring flex items-center justify-between rounded-2xl px-4 py-3">
+        <span className="text-sm text-[var(--muted)]">Room: {poll.roomId}</span>
+        <div className="flex items-center gap-2">
+          {isOwner ? (
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="rounded-full border border-red-300 bg-red-50 px-4 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60"
+            >
+              {isDeleting ? "Deleting..." : "Delete poll"}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs font-semibold text-[var(--ink)] hover:bg-black/[0.03]"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+        <PollCard
+          title={poll.question}
+          roomCode={poll.roomId}
+          timeLeft={poll.isActive ? "Open" : "Closed"}
+          totalVotes={voteTotal}
+          options={options}
+          onVote={(index) => {
+            if (!poll || !userId) return;
+
+            const option = poll.options[index];
+            if (!option || !poll.isActive) return;
+
+            const alreadyVoted = option.voters?.some((v) => String(v._id) === userId);
+
+            socket.emit(alreadyVoted ? SocketEvents.POLL_VOTE_REMOVE : SocketEvents.POLL_VOTE, {
+              pollId: poll._id,
+              optionId: option._id,
+              userId,
+            });
+          }}
+        />
+
+        <ChatBox
+          roomName={poll.roomId}
+          messages={messages.map((message) => {
+            const senderId =
+              typeof message.userId === "string" ? message.userId : String(message.userId?._id || "");
+            return {
+              name: typeof message.userId === "string" ? message.userId : message.userId.name || "User",
+              text: message.text,
+              isMine: senderId === userId,
+            };
+          })}
+          disabled={!userId}
+          onSend={async (text) => {
+            socket.emit(SocketEvents.CHAT_MESSAGE, {
+              pollId: poll._id,
+              userId,
+              text,
+            });
+          }}
+        />
+      </div>
     </div>
   );
 }

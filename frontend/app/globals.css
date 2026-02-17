@@ -2,47 +2,49 @@
 @import "tailwindcss";
 /* @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap'); */
 :root {
-  /* Modern Dark/Light Theme Palette */
-  --bg: #0f1115;
-  --panel: #181b21;
-  --panel-2: #22262e;
-  --ink: #f0f2f5;
-  --muted: #94a3b8;
-  
-  /* Vibrant Accents */
-  --accent: #6366f1; /* Indigo */
-  --accent-hover: #4f46e5;
-  --accent-2: #10b981; /* Emerald */
-  --danger: #ef4444; /* Red */
-  
-  /* Typography */
+  --bg: #f8f4ec;
+  --panel: #efe6d8;
+  --panel-2: #e6ddce;
+  --ink: #0f172a;
+  --muted: #64748b;
+
+  --accent: #c08457;
+  --accent-hover: #a1623a;
+  --accent-2: #7a8b5d;
+  --danger: #ef4444;
+
   --font-display: 'Outfit', sans-serif;
   --font-body: 'Outfit', sans-serif;
 }
 
+
 body {
   background-color: var(--bg);
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.15) 0px, transparent 50%);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(194, 139, 92, 0.10) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(146, 165, 108, 0.10) 0px, transparent 50%);
   color: var(--ink);
   font-family: var(--font-body);
   min-height: 100vh;
 }
 
+
 .glass {
-  background: rgba(24, 27, 33, 0.7);
+  background: rgba(255,255,255,0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
+
 .soft-ring {
-  box-shadow: 
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.06),
+    0 10px 15px rgba(0,0,0,0.06),
+    0 4px 6px rgba(0,0,0,0.04);
 }
+
 
 /* Scrollbar */
 ::-webkit-scrollbar {

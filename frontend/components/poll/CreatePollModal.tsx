@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CreatePollPayload } from "@/services/poll.service";
 
 interface CreatePollModalProps {
@@ -13,35 +13,56 @@ interface CreatePollModalProps {
 export default function CreatePollModal({ open, onClose, onCreate }: CreatePollModalProps) {
   const [question, setQuestion] = useState("");
 
-  const [expiresAt, setExpiresAt] = useState("");
-
   const [options, setOptions] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<{
+  question?: string;
+  options?: string;
+}>({});
 
   if (!open) return null;
 
   const handleCreate = async () => {
-    const cleanOptions = options.map((text) => text.trim()).filter(Boolean);
-    if (!question.trim() || cleanOptions.length < 2 || !expiresAt) {
-      return;
-    }
-    setLoading(true);
-    try {
-      await onCreate({
-        question: question.trim(),
 
-        options: cleanOptions.map((text) => ({ text })),
-        expiresAt,
-      });
-      setQuestion("");
+  const cleanQuestion = question.trim();
+  const cleanOptions = options.map((text) => text.trim()).filter(Boolean);
 
-      setExpiresAt("");
-      setOptions(["", "", "", ""]);
-      onClose();
-    } finally {
-      setLoading(false);
-    }
-  };
+  const newError: {
+    question?: string;
+    options?: string;
+  } = {};
+
+  if (!cleanQuestion) {
+    newError.question = "Question is required";
+  }
+
+  if (cleanOptions.length < 2) {
+    newError.options = "Please enter at least 2 options";
+  }
+
+  if (Object.keys(newError).length > 0) {
+    setError(newError);
+    return;
+  }
+
+  setError({});
+  setLoading(true);
+
+  try {
+    await onCreate({
+      question: cleanQuestion,
+      options: cleanOptions.map((text) => ({ text }))
+    });
+
+    setQuestion("");
+    setOptions(["", "", "", ""]);
+    onClose();
+
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
@@ -61,25 +82,18 @@ export default function CreatePollModal({ open, onClose, onCreate }: CreatePollM
           </button>
         </div>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <div className="mt-6 grid gap-4 md:grid-cols-1">
           <label className="flex flex-col gap-2 text-xs ">
             Question
             <input
               value={question}
               onChange={(event) => setQuestion(event.target.value)}
-              className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm "
+              className="rounded-xl border border-white/10 bg-white/15 px-4 py-3 text-sm "
               placeholder="What should we ship first?"
             />
-          </label>
-
-          <label className="flex flex-col gap-2 text-xs ">
-            Expires at
-            <input
-              type="datetime-local"
-              value={expiresAt}
-              onChange={(event) => setExpiresAt(event.target.value)}
-              className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm "
-            />
+            {error.question && (
+            <span className="text-red-400 text-xs">{error.question}</span>
+          )}
           </label>
         </div>
 
@@ -98,6 +112,10 @@ export default function CreatePollModal({ open, onClose, onCreate }: CreatePollM
             />
           ))}
         </div>
+        {error.options && (
+          <span className="text-red-400 text-xs">{error.options}</span>
+        )}
+
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <button

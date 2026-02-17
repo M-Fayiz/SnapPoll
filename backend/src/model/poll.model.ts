@@ -28,7 +28,6 @@ const PollShema = new Schema<IPollModel>(
 
     roomId: { type: String, required: true, index: true },
 
-    expiresAt: { type: Date, required: true, index: true },
     isActive: { type: Boolean, default: true },
     voters: [{ type: String }],
   },

@@ -16,8 +16,12 @@ export interface ChatMessage {
 }
 
 export const chatService = {
-  listMessages: async (pollId: string) =>
-    (await axiosInstance.get<ChatMessage[]>(`/polls/${pollId}/messages`)).data,
-  sendMessage: async (pollId: string, userId: string, text: string) =>
-    (await axiosInstance.post<ChatMessage>(`/polls/${pollId}/messages`, { userId, text })).data,
+  listMessages: async (pollId: string) =>{
+   const response = await axiosInstance.get<ChatMessage[]>(`/polls/${pollId}/messages`)
+   return response.data
+  },
+  sendMessage: async (pollId: string, userId: string, text: string) =>{
+   const response= await axiosInstance.post<ChatMessage>(`/polls/${pollId}/messages`, { userId, text })
+   return response.data
+  },
 };

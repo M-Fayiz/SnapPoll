@@ -9,7 +9,7 @@ export const registerSockets = (io: Server) => {
     registerChatSocket(io, socket);
 
     socket.on(SocketEvents.DISCONNECT, () => {
-      // No-op for now
+    
     });
   });
 };

@@ -8,8 +8,6 @@ export interface IPoll {
   createdBy: string;
 
   roomId: string;
-
-  expiresAt: Date;
   isActive: boolean;
   voters?: string[];
 

@@ -1,4 +1,4 @@
-import { Model, QueryFilter, UpdateQuery, Document } from "mongoose";
+import { Model, QueryFilter, UpdateQuery, Document, Types } from "mongoose";
 
 export abstract class BaseRepository<T extends Document> {
   constructor(private model: Model<T>) {}
@@ -8,7 +8,7 @@ export abstract class BaseRepository<T extends Document> {
     return document.save();
   }
 
-  findById(id: string) {
+  findById(id:string) {
     return this.model.findById(id).exec();
   }
 

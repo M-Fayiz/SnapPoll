@@ -7,16 +7,16 @@ export class PollController {
 
   createPoll = async (req: Request, res: Response) => {
     try {
-      const { question, options, expiresAt } = req.body;
+      const { question, options } = req.body;
 
       const user = req.user as IUserModel;
+      if (!user?._id) return res.status(401).json({ message: "Unauthorized" });
 
       const poll = await this.pollService.createPoll({
         question,
         options,
         createdBy: String(user._id),
 
-        expiresAt: new Date(expiresAt),
       });
 
       return res.status(201).json(poll);
@@ -59,6 +59,21 @@ export class PollController {
       return res.json(poll);
     } catch {
       return res.status(500).json({ message: "Failed to vote" });
+    }
+  };
+
+  deletePoll = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const userId = (req.user as any)?._id || (req.user as any)?.id;
+      if (!userId) return res.status(401).json({ message: "Unauthorized" });
+
+      const deleted = await this.pollService.deletePoll(id as string, String(userId));
+      if (!deleted) return res.status(403).json({ message: "Only the poll creator can delete this poll" });
+
+      return res.json({ deleted: true });
+    } catch {
+      return res.status(500).json({ message: "Failed to delete poll" });
     }
   };
 }
