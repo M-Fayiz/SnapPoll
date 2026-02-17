@@ -21,4 +21,5 @@ export interface IPollOption {
   _id?: Types.ObjectId;
   text: string;
   votes: number;
+  voters?: string[];
 }

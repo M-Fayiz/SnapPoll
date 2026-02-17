@@ -2,7 +2,7 @@ import { Document, Types, model, Schema } from "mongoose";
 import { IPoll } from "../types/poll.types";
 import { dbModelName } from "../constant/dbModel.const";
 
-export interface IPollModel extends IPoll, Document<Types.ObjectId> {}
+export interface IPollModel extends IPoll, Document<Types.ObjectId> { }
 
 const PollShema = new Schema<IPollModel>(
   {
@@ -16,6 +16,7 @@ const PollShema = new Schema<IPollModel>(
         _id: { type: Schema.Types.ObjectId, auto: true },
         text: { type: String, required: true },
         votes: { type: Number, default: 0 },
+        voters: [{ type: String, ref: dbModelName.USER }],
       },
     ],
 

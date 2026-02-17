@@ -4,6 +4,7 @@ export interface PollOption {
   _id: string;
   text: string;
   votes: number;
+  voters?: { _id: string; name: string; email: string }[];
 }
 
 export interface Poll {
