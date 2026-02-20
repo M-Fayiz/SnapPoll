@@ -3,6 +3,8 @@ import GoogleLoginButton from "@/components/common/GoogleLoginButton";
 
 export default function Home() {
   return (
+    <>
+
     <div className="min-h-screen px-6 py-10 md:px-10 lg:px-16">
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-12">
         <header className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
@@ -76,5 +78,6 @@ export default function Home() {
         </section>
       </main>
     </div>
+    </ >
   );
 }

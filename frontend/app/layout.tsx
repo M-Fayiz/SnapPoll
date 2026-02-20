@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
+import { Provider } from "react-redux";
+import { store } from "@/store/auth.store";
+
 const display = Bricolage_Grotesque({
   variable: "--font-display",
   subsets: ["latin"],
@@ -26,7 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${display.variable} ${body.variable} antialiased`}>{children}</body>
+         <Provider store={store}>
+
+             <body className={`${display.variable} ${body.variable} antialiased`}>{children}</body>
+         </Provider>
     </html>
   );
 }
