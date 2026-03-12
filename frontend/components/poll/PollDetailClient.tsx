@@ -125,12 +125,6 @@ export default function PollDetailClient({ pollId }: PollDetailClientProps) {
     }
   };
 
-  const handleLogout = async () => {
-    await authService.logout();
-    socket.disconnect();
-    router.push("/");
-  };
-
   return (
     <div className="space-y-4">
       <div className="glass soft-ring flex items-center justify-between rounded-2xl px-4 py-3">
@@ -146,13 +140,6 @@ export default function PollDetailClient({ pollId }: PollDetailClientProps) {
               {isDeleting ? "Deleting..." : "Delete poll"}
             </button>
           ) : null}
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs font-semibold text-[var(--ink)] hover:bg-black/[0.03]"
-          >
-            Logout
-          </button>
         </div>
       </div>
 

@@ -1,45 +1,51 @@
-import { authService } from "@/services/auth.service"
-import { createSlice ,createAsyncThunk} from "@reduxjs/toolkit"
+import { authService, type AuthUser } from "@/services/auth.service";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-
-
-
-export const loginUser = createAsyncThunk(
-    "auth/check",
-    async()=>{
-        const res = await authService.getMe()
-        return res
-
-    }
-)
-
-const initialState={
-   
-    user:{
-        name:'',
-        email :""
-    },
-    loading:false
+interface AuthState {
+  user: AuthUser | null;
+  loading: boolean;
+  initialized: boolean;
 }
 
-const userSlicer = createSlice({
-    name:'users',
-    initialState,
-    reducers:{
-        logOut:(state)=>{
-            state.user={name:'',email:''}
-        }
+export const checkAuth = createAsyncThunk("auth/check", async () => {
+  const res = await authService.getMe();
+  return res;
+});
+
+const initialState: AuthState = {
+  user: null,
+  loading: false,
+  initialized: false,
+};
+
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    logOut(state) {
+      state.user = null;
+      state.loading = false;
+      state.initialized = true;
     },
-    extraReducers:(builder)=>{
-        builder
-            .addCase(loginUser.pending,(state)=>{
-                state.loading=true
-            })
-            .addCase(loginUser.fulfilled,(state)=>{
-                state.loading = false
-            })
-    }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(checkAuth.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        state.initialized = true;
+        state.user = action.payload;
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.loading = false;
+        state.initialized = true;
+        state.user = null;
+      });
+  },
+});
 
-}) 
+export const { logOut } = authSlice.actions;
 
-export default userSlicer.reducer
+export default authSlice.reducer;
