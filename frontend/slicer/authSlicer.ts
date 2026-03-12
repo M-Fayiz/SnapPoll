@@ -7,7 +7,9 @@ interface AuthState {
   initialized: boolean;
 }
 
-export const checkAuth = createAsyncThunk("auth/check", async () => {
+export const checkAuth = createAsyncThunk(
+  "auth/check",
+   async () => {
   const res = await authService.getMe();
   return res;
 });

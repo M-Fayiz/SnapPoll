@@ -81,8 +81,8 @@ export default function DashboardPage() {
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-[var(--ink)]">
-              <span>{user.name}</span>
-              <span className="text-[var(--muted)]">{user.email}</span>
+              <span>{user&&user.name}</span>
+              <span className="text-[var(--muted)]">{user&&user.email}</span>
             </div>
             <button
               type="button"
